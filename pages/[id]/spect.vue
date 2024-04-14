@@ -76,7 +76,7 @@ async function update_maps() {
 
 <style>
 .background {
-    background-color: #00b140;
+    background-color: #00b14100;
 }
 
 .grid-container {

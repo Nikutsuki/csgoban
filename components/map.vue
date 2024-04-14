@@ -12,26 +12,26 @@ console.log(props.map, props.banned, props.picked)
 
 <template>
     <div v-if="picked" class="w-full h-screen flex justify-center items-center bg-slate-700 p-2 flex-col">
-        <div class=" bg-slate-800 flex items-center justify-center text-white text-7xl rounded-lg p-2">
+        <div class="img_border">
             <img :src="`/maps/${props.map}.png`" alt="map" class="w-full h-full img" />
         </div>
-        <div class="text-green-300 text-xl">
+        <div class="text-green-300 text-4xl text">
             {{ props.map }}
         </div>
     </div>
     <div v-else-if="!banned" class="w-full h-screen flex justify-center items-center bg-slate-700 p-2 flex-col">
-        <div class=" bg-slate-800 flex items-center justify-center text-white text-7xl rounded-lg p-2">
+        <div class="img_border">
             <img :src="`/maps/${props.map}.png`" alt="map" class="w-full h-full img" />
         </div>
-        <div class="text-white text-xl">
+        <div class="text-white text-4xl text">
             {{ props.map }}
         </div>
     </div>
     <div v-else class="w-full h-screen flex justify-center items-center bg-slate-700 p-2 flex-col">
-        <div class=" bg-slate-800 flex items-center justify-center text-white text-7xl rounded-lg p-2">
+        <div class="img_border">
             <img :src="`/maps/${props.map}.png`" alt="map" class="w-full h-full img" />
         </div>
-        <div class="text-red-700 text-xl">
+        <div class="text-red-700 text-4xl text">
             {{ props.map }}
         </div>
     </div>
@@ -42,6 +42,31 @@ console.log(props.map, props.banned, props.picked)
     .img {
         width: 200px;
         height: 200px;
+    }
+
+    .img_border {
+        --tw-bg-opacity: 1;
+        background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        --tw-text-opacity: 1;
+        color: rgb(255 255 255 / var(--tw-text-opacity));
+        font-size: 4.5rem/* 72px */;
+        line-height: 1;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .img_border:hover {
+        --tw-bg-opacity: 1;
+        background-color: yellow
+    }
+
+    .text {
+        font-family: "Counter-Strike";
+        text-shadow: 2px 2px 2px black;
     }
 
 </style>

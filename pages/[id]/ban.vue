@@ -125,14 +125,17 @@
 
 <template>
     <div class="justify-center items-center flex h-screen w-full bg-slate-700">
-        <div v-if="lobby_exists" class="justify-center items-center flex">
+        <div v-if="lobby_exists" class="justify-center items-center flex flex-row-reverse">
             <div v-if="team_selected" class="flex flex-col justify-center items-center">
-                <div class="relative inset-y-7">
-                    <div v-if="turn == team_selected">
-                        Your turn
+                <div class="relative inset-y-40 text-7xl text-white text">
+                    <div class="flex justify-center items-center">
+                        {{ team_selected }}
                     </div>
-                    <div v-else>
-                        Opponent's turn
+                    <div v-if="turn == team_selected" class="">
+                        Twoja kolej
+                    </div>
+                    <div v-else class="">
+                        Kolej przeciwnika
                     </div>
                 </div>
                 <div class="flex">
@@ -141,7 +144,10 @@
                     </li>
                 </div>
             </div>
-            <div v-else class="flex items-center justify-center">
+            <div v-else class="flex items-center justify-center flex-col">
+                <div>
+                    <h1 class="text-white -mt-80 text-6xl text">Wybierz druzyne</h1>
+                </div>
                 <TeamSelect :team1="team_1" :team2="team_2" @team_selected="team_select" />
             </div>
         </div>

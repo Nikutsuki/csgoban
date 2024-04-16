@@ -13,6 +13,7 @@
     let map1 = ref("")
     let map2 = ref("")
     let map3 = ref("")
+    let choose_side = ref(false)
 
     onMounted(async () => {
         await fetch(`/api/lobby_data?id=${lobby_id.value}`)
@@ -68,6 +69,18 @@
             } else {
                 maps.value[i].picked = false
             }
+        }
+    }
+
+    function check_side_modal() {
+        if(type == "bo1") return;
+
+        if(map1.value == "" || map2.value == "" || map3.value == "") {
+            return;
+        }
+
+        if(map1.value) {
+            
         }
     }
 
@@ -127,6 +140,9 @@
     <div class="justify-center items-center flex h-screen w-full bg-slate-700">
         <div v-if="lobby_exists" class="justify-center items-center flex flex-row-reverse">
             <div v-if="team_selected" class="flex flex-col justify-center items-center">
+                <div v-if="choose_side">
+                    <SideChoosePopup :id="id" :route="url.origin"/>
+                </div>
                 <div class="relative inset-y-40 text-7xl text-white text">
                     <div class="flex justify-center items-center">
                         {{ team_selected }}

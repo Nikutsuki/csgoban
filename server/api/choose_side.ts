@@ -14,8 +14,9 @@ export default defineEventHandler(async (event) => {
                 }
             }
             let maps_spect = data.maps_spect
-            if(side == "t") {
-                maps_spect[maps_spect.length - 1].side_choice = "t"
+            data.side_choice_phase = false
+            if(side == "tt") {
+                maps_spect[maps_spect.length - 1].side_choice = "tt"
             }
             else {
                 maps_spect[maps_spect.length - 1].side_choice = "ct"

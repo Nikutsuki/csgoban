@@ -17,12 +17,13 @@ onMounted(() => {
 
 <template>
     <div class="modal-overlay">
-        <div class="modal w-1/2 h-1/ bg-teal-800 p-6 flex flex-col justify-center items-center rounded-lg">
-            <span class="text-white">Spectator link:</span>
-            <input type="text" v-model="spect_link" class="w-full h-10 bg-gray-200 rounded-lg input my-4" disabled>
-            <span class="text-white">Team link:</span>
-            <input type="text" v-model="team_link" class="w-full h-10 bg-gray-200 rounded-lg input my-4" disabled>
-            <button @click="$emit('ct')" class="w-full h-10 bg-blue-500 rounded-lg text-white"></button>
+        <div class="modal w-1/3 h-1/3 bg-teal-800 p-6 flex justify-between items-center rounded-lg">
+            <div class="border-2 rounded-lg border-teal-600 hover:bg-teal-700">
+                <img :src="`/tt.png`" alt="tt" class="w-64 h-64" @click="$emit('tt')"/>
+            </div>
+            <div class="border-2 border-teal-600 rounded-lg p-4 hover:bg-teal-700">
+                <img :src="`/ct.png`" alt="ct" class="w-56 h-56" @click="$emit('ct')"/>
+            </div>
         </div>
     </div>
 </template>
@@ -39,5 +40,9 @@ onMounted(() => {
     align-items: center;
     background-color: #000000da;
     backdrop-filter: blur(10px);
+}
+
+.side:hover {
+    background-color: ;
 }
 </style>

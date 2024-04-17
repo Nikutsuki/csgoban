@@ -48,6 +48,10 @@ export const LobbySchema = defineMongooseModel({
             type: String,
             required: false,
         },
+        side_choice_phase: {
+            type: Boolean,
+            required: false,
+        },
         maps_spect: [
             {
                 name: {

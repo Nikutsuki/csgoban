@@ -66,7 +66,8 @@ export default defineEventHandler(async (event) => {
                     spect_map.picked = true
                     spect_map.banned = false
                     if(spect_maps.length == 2) data.map1 = banned_map
-                    if(spect_maps.length == 3) data.map2 = banned_map //kys nygger
+                    if(spect_maps.length == 3) data.map2 = banned_map
+                    data.side_choice_phase = true
                 }
                 data.maps_spect.push(spect_map)
                 if(banned_maps.length == 6) {
@@ -84,7 +85,7 @@ export default defineEventHandler(async (event) => {
                             spect_maps.push(spect_map)
                             break;
                         }
-                    } //jebac disa
+                    }
                 }
                 else {
                 }
@@ -95,7 +96,7 @@ export default defineEventHandler(async (event) => {
             if(team == data.t1_name) data.team_turn = data.t2_name
             else data.team_turn = data.t1_name
             return data.save()
-            .then((data) => { //jebac czarnucha
+            .then((data) => {
                 setResponseStatus(event, 200);
                 return {
                     body: JSON.stringify(data)

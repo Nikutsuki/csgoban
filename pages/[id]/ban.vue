@@ -1,29 +1,31 @@
 <script setup lang="ts">
-    const route = useRoute()
-    const lobby_id = ref('')
-    lobby_id.value = route.params.id
-    let lobby_exists = ref(false)
-    let team_selected = ref("")
-    let maps = ref([])
-    let team_1 = ref("")
-    let team_2 = ref("")
-    let banned_maps = ref([])
-    let turn = ref("")
-    let type = ref("")
-    let map1 = ref("")
-    let map2 = ref("")
-    let map3 = ref("")
-    let choose_side = ref(false)
+const route = useRoute()
+const url = useRequestURL()
+const lobby_id = ref('')
+lobby_id.value = route.params.id
+let lobby_exists = ref(false)
+let team_selected = ref("")
+let maps = ref([])
+let team_1 = ref("")
+let team_2 = ref("")
+let banned_maps = ref([])
+let turn = ref("")
+let type = ref("")
+let map1 = ref("")
+let map2 = ref("")
+let map3 = ref("")
+let choose_side = ref(false)
+let side_choice_phase = ref(false)
 
-    onMounted(async () => {
-        await fetch(`/api/lobby_data?id=${lobby_id.value}`)
+onMounted(async () => {
+    await fetch(`/api/lobby_data?id=${lobby_id.value}`)
         .then(async res => {
             const json = await res.json();
             const data = json.data
             if (res.status == 200) {
                 lobby_exists.value = true
                 maps.value = data.all_maps
-                for(let i = 0; i < maps.value.length; i++) {
+                for (let i = 0; i < maps.value.length; i++) {
                     maps.value[i] = {
                         map: maps.value[i],
                         banned: false,
@@ -33,7 +35,7 @@
                 //console.log(maps.value)
                 check_bans()
                 check_picks()
-                for(let i = 0; i < maps.value.length; i++) {
+                for (let i = 0; i < maps.value.length; i++) {
                     maps.value[i].map = maps.value[i].map.toLowerCase()
                 }
                 team_1.value = data.t1_name
@@ -42,97 +44,145 @@
                 map1.value = data.map1
                 map2.value = data.map2
                 map3.value = data.map3
+                side_choice_phase.value = data.side_choice_phase
             }
         })
 
-        setInterval(async () => {
-            await fetch_data()
-        }, 1000)
-    })
+    setInterval(async () => {
+        await fetch_data()
+    }, 1000)
+})
 
-    function check_bans() {
-        for(let i = 0; i < maps.value.length; i++) {
-            if(banned_maps.value.includes(maps.value[i].map)) {
-                //console.log(maps.value[i])
-                maps.value[i].banned = true
-            } else {
-                //console.log(maps.value[i])
-                maps.value[i].banned = false
+function check_bans() {
+    for (let i = 0; i < maps.value.length; i++) {
+        if (banned_maps.value.includes(maps.value[i].map)) {
+            //console.log(maps.value[i])
+            maps.value[i].banned = true
+        } else {
+            //console.log(maps.value[i])
+            maps.value[i].banned = false
+        }
+    }
+}
+
+function check_picks() {
+    for (let i = 0; i < maps.value.length; i++) {
+        if (map1.value == maps.value[i].map || map2.value == maps.value[i].map || map3.value == maps.value[i].map) {
+            maps.value[i].picked = true
+        } else {
+            maps.value[i].picked = false
+        }
+    }
+}
+
+function check_side_modal() {
+    if (type == "bo1") {
+        choose_side.value = false
+        return;
+    }
+    if(!side_choice_phase.value) {
+        choose_side.value = false
+        return;
+    }
+    if(team_selected.value != turn.value) {
+        choose_side.value = false
+        return;
+    }
+    if (banned_maps.value.length != 2 && banned_maps.value.length != 3) {
+        choose_side.value = false
+    }
+    if (map1.value == "" || map2.value == "" || map3.value == "") {
+        choose_side.value = false
+    }
+
+    if (map1.value) {
+        choose_side.value = true
+    }
+    if (map2.value) {
+        choose_side.value = true
+    }
+}
+
+async function fetch_data() {
+    await fetch(`/api/lobby_data?id=${lobby_id.value}`)
+        .then(async res => {
+            const json = await res.json();
+            const data = json.data
+            if (res.status == 200) {
+                banned_maps.value = data.banned_maps
+                turn.value = data.team_turn
+                map1.value = data.map1
+                map2.value = data.map2
+                map3.value = data.map3
+                side_choice_phase.value = data.side_choice_phase
+                check_bans()
+                check_picks()
+                check_side_modal()
+                console.log(maps.value, banned_maps.value)
+                console.log(side_choice_phase.value)
             }
-        }
-    }
-
-    function check_picks() {
-        for(let i = 0; i < maps.value.length; i++) {
-            if(map1.value == maps.value[i].map || map2.value == maps.value[i].map || map3.value == maps.value[i].map) {
-                maps.value[i].picked = true
-            } else {
-                maps.value[i].picked = false
-            }
-        }
-    }
-
-    function check_side_modal() {
-        if(type == "bo1") return;
-
-        if(map1.value == "" || map2.value == "" || map3.value == "") {
-            return;
-        }
-
-        if(map1.value) {
-            
-        }
-    }
-
-    async function fetch_data() {
-        await fetch(`/api/lobby_data?id=${lobby_id.value}`)
-            .then(async res => {
-                const json = await res.json();
-                const data = json.data
-                if (res.status == 200) {
-                    banned_maps.value = data.banned_maps
-                    turn.value = data.team_turn
-                    map1.value = data.map1
-                    map2.value = data.map2
-                    map3.value = data.map3
-                    check_bans()
-                    check_picks()
-                    console.log(maps.value, banned_maps.value)
-                }
         })
-    }
+}
 
-    function team_select(team: string) {
-        console.log(team)
-        team_selected.value = team
-    }
+function team_select(team: string) {
+    console.log(team)
+    team_selected.value = team
+}
 
-    function ban_map(map: string) {
-        let map_name = map.map
-        console.log(banned_maps.value.length)
-        if(banned_maps.value.length == 6) {
-            return
-        }
-        if(banned_maps.value.includes(map_name)) {
-            return
-        }
-        if(team_selected.value == turn.value) {
-            banned_maps.value.push(map_name)
-            //console.log(banned_maps.value)
-            fetch(`/api/ban_map`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    banned_map: map_name,
-                    id: lobby_id.value,
-                    team: team_selected.value
-                })
+function ban_map(map: string) {
+    let map_name = map.map
+    console.log(banned_maps.value.length)
+    if (banned_maps.value.length == 6) {
+        return
+    }
+    if (banned_maps.value.includes(map_name)) {
+        return
+    }
+    if (team_selected.value == turn.value) {
+        banned_maps.value.push(map_name)
+        //console.log(banned_maps.value)
+        fetch(`/api/ban_map`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                banned_map: map_name,
+                id: lobby_id.value,
+                team: team_selected.value
             })
-        }
-        fetch_data()
+        })
     }
+    fetch_data()
+}
+
+function choose_ct() {
+    choose_side.value = false
+    fetch(`/api/choose_side`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            side: "ct",
+            id: lobby_id.value
+        })
+    })
+}
+
+function choose_tt() {
+    choose_side.value = false
+    fetch(`/api/choose_side`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            side: "tt",
+            id: lobby_id.value
+        })
+    })
+}
 
 </script>
 
@@ -141,23 +191,25 @@
         <div v-if="lobby_exists" class="justify-center items-center flex flex-row-reverse">
             <div v-if="team_selected" class="flex flex-col justify-center items-center">
                 <div v-if="choose_side">
-                    <SideChoosePopup :id="id" :route="url.origin"/>
+                    <SideChoosePopup :id="lobby_id" :route="url.origin" @ct="choose_ct" @tt="choose_tt" />
                 </div>
-                <div class="relative inset-y-40 text-7xl text-white text">
-                    <div class="flex justify-center items-center">
-                        {{ team_selected }}
+                <div v-else>
+                    <div class="relative inset-y-40 text-7xl text-white text">
+                        <div class="flex justify-center items-center">
+                            {{ team_selected }}
+                        </div>
+                        <div v-if="turn == team_selected" class="">
+                            Twoja kolej
+                        </div>
+                        <div v-else class="">
+                            Kolej przeciwnika
+                        </div>
                     </div>
-                    <div v-if="turn == team_selected" class="">
-                        Twoja kolej
+                    <div class="flex">
+                        <li v-for="map in maps" :key="map" class="list-none">
+                            <Map :map="map.map" :banned="map.banned" :picked="map.picked" @click="ban_map(map)" />
+                        </li>
                     </div>
-                    <div v-else class="">
-                        Kolej przeciwnika
-                    </div>
-                </div>
-                <div class="flex">
-                    <li v-for="map in maps" :key="map" class="list-none">
-                        <Map :map="map.map" :banned="map.banned" :picked="map.picked" @click="ban_map(map)" />
-                    </li>
                 </div>
             </div>
             <div v-else class="flex items-center justify-center flex-col">

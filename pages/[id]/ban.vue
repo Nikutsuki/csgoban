@@ -16,6 +16,7 @@ let map2 = ref("")
 let map3 = ref("")
 let choose_side = ref(false)
 let side_choice_phase = ref(false)
+let maps_spect = ref([])
 
 onMounted(async () => {
     await fetch(`/api/lobby_data?id=${lobby_id.value}`)
@@ -29,14 +30,9 @@ onMounted(async () => {
                     maps.value[i] = {
                         map: maps.value[i],
                         banned: false,
-                        picked: false
+                        picked: false,
+                        team: ""
                     }
-                }
-                //console.log(maps.value)
-                check_bans()
-                check_picks()
-                for (let i = 0; i < maps.value.length; i++) {
-                    maps.value[i].map = maps.value[i].map.toLowerCase()
                 }
                 team_1.value = data.t1_name
                 team_2.value = data.t2_name
@@ -45,6 +41,15 @@ onMounted(async () => {
                 map2.value = data.map2
                 map3.value = data.map3
                 side_choice_phase.value = data.side_choice_phase
+                maps_spect.value = data.maps_spect
+                //console.log(maps.value)
+                check_bans()
+                check_picks()
+                check_side_modal()
+                check_side()
+                for (let i = 0; i < maps.value.length; i++) {
+                    maps.value[i].map = maps.value[i].map.toLowerCase()
+                }
             }
         })
 
@@ -73,6 +78,40 @@ function check_picks() {
             maps.value[i].picked = false
         }
     }
+}
+
+function check_side() {
+    if (type == "bo1") {
+        return;
+    }
+    for(let i = 0; i < maps_spect.value.length; i++) {
+        for(let j = 0; j < maps.value.length; j++) {
+            if(maps_spect.value[i].name == maps.value[j].map) {
+                if(maps_spect.value[i].picked) {
+                    if(maps_spect.value[i].is_decider) continue;
+                    if(maps_spect.value[i].side_choice == "") continue;
+                    if(maps_spect.value[i].side_choice == "ct") {
+                        if(maps_spect.value[i].team == team_selected.value) {
+                            maps.value[j].team = "tt"
+                            maps.value[j] = maps.value[j]
+                        } else {
+                            maps.value[j].team = "ct"
+                            maps.value[j] = maps.value[j]
+                        }
+                    } else {
+                        if(maps_spect.value[i].team == team_selected.value) {
+                            maps.value[j].team = "ct"
+                            maps.value[j] = maps.value[j]
+                        } else {
+                            maps.value[j].team = "tt"
+                            maps.value[j] = maps.value[j]
+                        }
+                    }
+                }
+            }
+        }
+    }
+    console.log(maps.value)
 }
 
 function check_side_modal() {
@@ -115,11 +154,11 @@ async function fetch_data() {
                 map2.value = data.map2
                 map3.value = data.map3
                 side_choice_phase.value = data.side_choice_phase
+                maps_spect.value = data.maps_spect
                 check_bans()
                 check_picks()
                 check_side_modal()
-                console.log(maps.value, banned_maps.value)
-                console.log(side_choice_phase.value)
+                check_side()
             }
         })
 }
@@ -168,6 +207,7 @@ function choose_ct() {
             id: lobby_id.value
         })
     })
+    fetch_data()
 }
 
 function choose_tt() {
@@ -182,6 +222,7 @@ function choose_tt() {
             id: lobby_id.value
         })
     })
+    fetch_data()
 }
 
 </script>
@@ -191,23 +232,23 @@ function choose_tt() {
         <div v-if="lobby_exists" class="justify-center items-center flex flex-row-reverse">
             <div v-if="team_selected" class="flex flex-col justify-center items-center">
                 <div v-if="choose_side">
-                    <SideChoosePopup :id="lobby_id" :route="url.origin" @ct="choose_ct" @tt="choose_tt" />
+                    <SideChoosePopup :id="lobby_id" :route="url.origin" :map="banned_maps[banned_maps.length - 1]" @ct="choose_ct" @tt="choose_tt" />
                 </div>
                 <div v-else>
                     <div class="relative inset-y-40 text-7xl text-white text">
                         <div class="flex justify-center items-center">
                             {{ team_selected }}
                         </div>
-                        <div v-if="turn == team_selected" class="">
+                        <div v-if="turn == team_selected" class="flex justify-center items-center">
                             Twoja kolej
                         </div>
-                        <div v-else class="">
+                        <div v-else class="flex justify-center items-center">
                             Kolej przeciwnika
                         </div>
                     </div>
                     <div class="flex">
                         <li v-for="map in maps" :key="map" class="list-none">
-                            <Map :map="map.map" :banned="map.banned" :picked="map.picked" @click="ban_map(map)" />
+                            <Map :map="map.map" :banned="map.banned" :picked="map.picked" :team="map.team" @click="ban_map(map)" />
                         </li>
                     </div>
                 </div>

@@ -59,7 +59,9 @@ export default defineEventHandler(async (event) => {
                     banned: true,
                     team: team,
                     team_number: team_number,
-                    is_decider: false
+                    is_decider: false,
+                    side_choice: "",
+                    side_choice_team: ""
                 }
                 let spect_maps = data.maps_spect
                 if(spect_maps.length == 2 || spect_maps.length == 3) {
@@ -80,7 +82,9 @@ export default defineEventHandler(async (event) => {
                                 banned: false,
                                 team: team,
                                 team_number: team_number,
-                                is_decider: true
+                                is_decider: true,
+                                side_choice: "",
+                                side_choice_team: ""
                             }
                             spect_maps.push(spect_map)
                             break;

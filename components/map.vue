@@ -4,6 +4,7 @@ const props = defineProps<{
     map: string
     banned: boolean
     picked: boolean
+    team: string
 }>()
 
 console.log(props.map, props.banned, props.picked)
@@ -14,6 +15,9 @@ console.log(props.map, props.banned, props.picked)
     <div v-if="picked" class="w-full h-screen flex justify-center items-center bg-slate-700 p-2 flex-col">
         <div class="img_border">
             <img :src="`/maps/${props.map}.png`" alt="map" class="w-full h-full img" />
+            <div v-if="team != ''" class="absolute">
+                <img :src="`/${props.team}.png`" :alt="`${props.team}`" class="w-32 h-32" />
+            </div>
         </div>
         <div class="text-green-300 text-4xl text">
             {{ props.map }}
@@ -68,5 +72,4 @@ console.log(props.map, props.banned, props.picked)
         font-family: "Counter-Strike";
         text-shadow: 2px 2px 2px black;
     }
-
 </style>

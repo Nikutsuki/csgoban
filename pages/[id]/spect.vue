@@ -35,14 +35,13 @@ async function fetch_data() {
             const data = json.data
             if (res.status == 200) {
                 maps_new.value = data.maps_spect
-                update_maps()
                 team_1.value = data.t1_name
                 team_2.value = data.t2_name
+                update_maps()
             } else {
                 maps.value = []
             }
         })
-        
 }
 
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
@@ -52,6 +51,10 @@ async function update_maps() {
         let found = false
         for(let j = 0; j < maps.value.length; j++) {
             if(maps_new.value[i].name == maps.value[j].name) {
+                if(maps_new.value[i].side_choice != maps.value[j].side_choice) {
+                    maps.value[j].side_choice = maps_new.value[i].side_choice
+                    maps.value[j].side_choice_team = maps_new.value[i].side_choice_team
+                }
                 found = true
             }
         }
@@ -69,7 +72,8 @@ async function update_maps() {
     <div class="flex w-full h-screen justify-center items-center background overflow-hidden">
         <div class="grid-container items-center">
             <map_spect v-for="map in maps" :map="map.name" :banned="map.banned" :picked="map.picked" :team="map.team"
-                :team_number="map.team_number" :is_decider="map.is_decider"/>
+                :team_number="map.team_number" :is_decider="map.is_decider" :side_choice="map.side_choice" :side_choice_team="map.side_choice_team"
+                :lobby_id="`${lobby_id}`"/>
         </div>
     </div>
 </template>

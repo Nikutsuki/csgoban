@@ -81,6 +81,10 @@ export const LobbySchema = defineMongooseModel({
                 side_choice: {
                     type: String,
                     required: false,
+                },
+                side_choice_team: {
+                    type: String,
+                    required: false,
                 }
             }
         ]

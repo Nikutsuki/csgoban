@@ -21,6 +21,8 @@ export default defineEventHandler(async (event) => {
             else {
                 maps_spect[maps_spect.length - 1].side_choice = "ct"
             }
+            let side_choice_team = data.team_turn == data.t1_name ? data.t1_name : data.t2_name
+            maps_spect[maps_spect.length - 1].side_choice_team = side_choice_team
             return data.save()
             .then((data) => {
                 return {

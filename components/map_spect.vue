@@ -7,9 +7,9 @@ const props = defineProps<{
     team: string
     team_number: number
     is_decider: boolean
+    side_choice: string
+    side_choice_team: string
 }>()
-
-
 
 </script>
 
@@ -38,6 +38,15 @@ const props = defineProps<{
             <img :src="`/maps/${props.map}.png`" alt="map" class="w-full h-full img picked" />
             <div class="text-white text-5xl centered picked-text">
                 {{ props.map }}
+            </div>
+            <div v-if="side_choice != ''">
+                <div class="bottom-bar text-xl bg-white text-black">
+                    <div class="flex h-10 w-24 justify-center bg-green-500">
+                        <img :src="`/${side_choice}.png`" alt="side" class="bg-green-500" />
+                    </div>
+                    <span v-if="props.team_number == 0" class="justify-end team-name bg-red-500">{{ side_choice_team }}</span>
+                    <span v-else class="justify-end team-name bg-blue-500">{{ side_choice_team }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -112,6 +121,17 @@ const props = defineProps<{
     overflow: hidden;
     align-items: center;
     padding: 10px;
+}
+
+.bottom-bar {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    width: 233px;
+    display: flex;
+    z-index: 1;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .slide-up {

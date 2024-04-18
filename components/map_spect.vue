@@ -40,7 +40,7 @@ const props = defineProps<{
                 {{ props.map }}
             </div>
             <div v-if="side_choice != ''" class="">
-                <div class="bottom-bar text-xl bg-white text-black slide-up">
+                <div class="bottom-bar text-xl bg-white text-black">
                     <div class="flex h-10 w-24 justify-center bg-white">
                         <img :src="`/${side_choice}.png`" alt="side" class="bg-white" />
                     </div>

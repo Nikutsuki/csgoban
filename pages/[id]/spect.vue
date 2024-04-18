@@ -49,8 +49,13 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 async function update_maps() {
     for(let i = 0; i < maps_new.value.length; i++) {
         let found = false
+        if(maps_new.value[i].picked == true && maps_new.value[i].side_choice == "" && maps_new.value[i].is_decider == false) {
+            found = true
+            return;
+        }
         for(let j = 0; j < maps.value.length; j++) {
             if(maps_new.value[i].name == maps.value[j].name) {
+                //console.log(maps_new.value[i])
                 if(maps_new.value[i].side_choice != maps.value[j].side_choice) {
                     maps.value[j].side_choice = maps_new.value[i].side_choice
                     maps.value[j].side_choice_team = maps_new.value[i].side_choice_team

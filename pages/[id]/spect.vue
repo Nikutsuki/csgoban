@@ -25,7 +25,7 @@ onMounted(async () => {
 
     setInterval(async () => {
         await fetch_data()
-    }, 1000)
+    }, 3000)
 })
 
 async function fetch_data() {

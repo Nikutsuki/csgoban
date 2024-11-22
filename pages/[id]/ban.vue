@@ -111,7 +111,7 @@ function check_side() {
             }
         }
     }
-    console.log(maps.value)
+    //console.log(maps.value)
 }
 
 function check_side_modal() {
@@ -143,10 +143,12 @@ function check_side_modal() {
 }
 
 async function fetch_data() {
+    //console.log("fetching data")
     await fetch(`/api/lobby_data?id=${lobby_id.value}`)
         .then(async res => {
             const json = await res.json();
             const data = json.data
+                //console.log(data)
             if (res.status == 200) {
                 banned_maps.value = data.banned_maps
                 turn.value = data.team_turn
@@ -164,13 +166,13 @@ async function fetch_data() {
 }
 
 function team_select(team: string) {
-    console.log(team)
+    //console.log(team)
     team_selected.value = team
 }
 
 function ban_map(map: string) {
     let map_name = map.map
-    console.log(banned_maps.value.length)
+    //console.log(banned_maps.value.length)
     if (banned_maps.value.length == 6) {
         return
     }

@@ -54,6 +54,8 @@
                 <label for="starts">bo1</label>
                 <input type="radio" v-model="bo" value="bo3" class="px-4" name="bo">
                 <label for="starts">bo3</label>
+                <input type="radio" v-model="bo" value="bo5" class="px-4" name="bo">
+                <label for="starts">bo5</label>
             </div>
             <button @click="submit_form" class="w-full h-10 bg-blue-500 rounded-lg text-white">Submit</button>
         </form>

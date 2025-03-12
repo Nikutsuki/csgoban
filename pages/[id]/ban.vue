@@ -14,6 +14,8 @@ let type = ref("")
 let map1 = ref("")
 let map2 = ref("")
 let map3 = ref("")
+let map4 = ref("") // Added for bo5
+let map5 = ref("") // Added for bo5
 let choose_side = ref(false)
 let side_choice_phase = ref(false)
 let maps_spect = ref([])
@@ -40,6 +42,8 @@ onMounted(async () => {
                 map1.value = data.map1
                 map2.value = data.map2
                 map3.value = data.map3
+                map4.value = data.map4 // Added for bo5
+                map5.value = data.map5 // Added for bo5
                 side_choice_phase.value = data.side_choice_phase
                 maps_spect.value = data.maps_spect
                 //console.log(maps.value)
@@ -72,10 +76,22 @@ function check_bans() {
 
 function check_picks() {
     for (let i = 0; i < maps.value.length; i++) {
-        if (map1.value == maps.value[i].map || map2.value == maps.value[i].map || map3.value == maps.value[i].map) {
-            maps.value[i].picked = true
+        if (type.value === "bo5") {
+            // For bo5, we need to check 5 maps (4 picked + 1 decider)
+            if (map1.value == maps.value[i].map || map2.value == maps.value[i].map || 
+                map3.value == maps.value[i].map || map4.value == maps.value[i].map || 
+                map5.value == maps.value[i].map) {
+                maps.value[i].picked = true
+            } else {
+                maps.value[i].picked = false
+            }
         } else {
-            maps.value[i].picked = false
+            // Original logic for bo1 and bo3
+            if (map1.value == maps.value[i].map || map2.value == maps.value[i].map || map3.value == maps.value[i].map) {
+                maps.value[i].picked = true
+            } else {
+                maps.value[i].picked = false
+            }
         }
     }
 }
@@ -115,7 +131,7 @@ function check_side() {
 }
 
 function check_side_modal() {
-    if (type == "bo1") {
+    if (type.value == "bo1") {
         choose_side.value = false
         return;
     }
@@ -127,17 +143,33 @@ function check_side_modal() {
         choose_side.value = false
         return;
     }
-    if (banned_maps.value.length != 2 && banned_maps.value.length != 3) {
+    
+    // For bo5, we need different logic for when to show side choice
+    if (type.value == "bo5") {
+        // In bo5, side choice is needed after each map pick
+        // We need to check if the current map has been picked but side hasn't been chosen yet
+        for (let i = 0; i < maps_spect.value.length; i++) {
+            // Only show side choice for picked maps that aren't deciders and don't have a side choice yet
+            if (maps_spect.value[i].picked && !maps_spect.value[i].is_decider && maps_spect.value[i].side_choice === "") {
+                choose_side.value = true
+                return;
+            }
+        }
         choose_side.value = false
-    }
-    if (map1.value == "" || map2.value == "" || map3.value == "") {
-        choose_side.value = false
-    }
+    } else {
+        // Original bo3 logic
+        if (banned_maps.value.length != 2 && banned_maps.value.length != 3) {
+            choose_side.value = false
+            return;
+        }
+        
+        // Check if maps are set
+        if (map1.value == "" && map2.value == "") {
+            choose_side.value = false
+            return;
+        }
 
-    if (map1.value) {
-        choose_side.value = true
-    }
-    if (map2.value) {
+        // If we have maps and we're in the right phase, show the side choice
         choose_side.value = true
     }
 }
@@ -155,6 +187,8 @@ async function fetch_data() {
                 map1.value = data.map1
                 map2.value = data.map2
                 map3.value = data.map3
+                map4.value = data.map4 // Added for bo5
+                map5.value = data.map5 // Added for bo5
                 side_choice_phase.value = data.side_choice_phase
                 maps_spect.value = data.maps_spect
                 check_bans()
@@ -234,7 +268,7 @@ function choose_tt() {
         <div v-if="lobby_exists" class="justify-center items-center flex flex-row-reverse">
             <div v-if="team_selected" class="flex flex-col justify-center items-center">
                 <div v-if="choose_side">
-                    <SideChoosePopup :id="lobby_id" :route="url.origin" :map="banned_maps[banned_maps.length - 1]" @ct="choose_ct" @tt="choose_tt" />
+                    <SideChoosePopup :id="lobby_id" :route="url.origin" :map="maps_spect[maps_spect.length - 1].name" @ct="choose_ct" @tt="choose_tt" />
                 </div>
                 <div v-else>
                     <div class="relative inset-y-40 text-7xl text-white text">

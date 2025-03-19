@@ -157,20 +157,16 @@ function check_side_modal() {
         }
         choose_side.value = false
     } else {
-        // Original bo3 logic
-        if (banned_maps.value.length != 2 && banned_maps.value.length != 3) {
-            choose_side.value = false
-            return;
+        // Updated bo3 logic
+        // For bo3, we need to check if there's a map that needs a side choice
+        for (let i = 0; i < maps_spect.value.length; i++) {
+            // Only show side choice for picked maps that aren't deciders and don't have a side choice yet
+            if (maps_spect.value[i].picked && !maps_spect.value[i].is_decider && maps_spect.value[i].side_choice === "") {
+                choose_side.value = true
+                return;
+            }
         }
-        
-        // Check if maps are set
-        if (map1.value == "" && map2.value == "") {
-            choose_side.value = false
-            return;
-        }
-
-        // If we have maps and we're in the right phase, show the side choice
-        choose_side.value = true
+        choose_side.value = false
     }
 }
 

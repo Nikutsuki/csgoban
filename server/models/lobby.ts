@@ -60,6 +60,23 @@ export const LobbySchema = defineMongooseModel({
             type: Boolean,
             required: false,
         },
+        // Replace single active_user with team-specific active users
+        active_user_team1: {
+            type: String,
+            required: false,
+        },
+        active_user_team2: {
+            type: String,
+            required: false,
+        },
+        last_activity_team1: {
+            type: Date,
+            required: false,
+        },
+        last_activity_team2: {
+            type: Date,
+            required: false,
+        },
         maps_spect: [
             {
                 name: {
